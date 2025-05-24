@@ -1,6 +1,8 @@
 package org.project.urlshorteningservice.service;
 
 import lombok.AllArgsConstructor;
+import org.project.urlshorteningservice.exception.exceptions.DuplicateLongURLException;
+import org.project.urlshorteningservice.exception.exceptions.URLNotFoundException;
 import org.project.urlshorteningservice.model.URL;
 import org.project.urlshorteningservice.model.URLResponse;
 import org.project.urlshorteningservice.model.URLStats;
@@ -31,7 +33,7 @@ public class URLService {
     }
 
     public ResponseEntity<URLResponse> retrieveLongURL(String shortURL) {
-        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(RuntimeException::new); // change later
+        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("Provided short URL does not exist."));
 
         url.setAccessCount(url.getAccessCount() + 1);
         urlRepository.save(url);
@@ -39,7 +41,7 @@ public class URLService {
     }
 
     public ResponseEntity<URLResponse> updateShortURL(String shortURL, String longURL) {
-        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(RuntimeException::new); // change later
+        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("Provided short URL does not exist."));
 
         if (!url.getLongURL().equals(longURL) && !longURL.isBlank()) {
             url.setLongURL(longURL);
@@ -49,19 +51,19 @@ public class URLService {
             return ResponseEntity.ok(new URLResponse(url.getShortURL(), url.getLongURL()));
         }
 
-        return ResponseEntity.badRequest().body(null);  // duplicate. may change later.
+        throw new DuplicateLongURLException("Provided long URL hasn't changed.");
     }
 
     public ResponseEntity<String> deleteShortURL(String shortURL) {
 
-        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(RuntimeException::new); // change later
+        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("Provided short URL does not exist."));
 
         urlRepository.delete(url);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Successfully deleted URL");
     }
 
     public ResponseEntity<URLStats> getURLStats(String shortURL) {
-        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(RuntimeException::new); // change later
+        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("Provided short URL does not exist."));
 
         return ResponseEntity.ok(new URLStats(url.getShortURL(), url.getLongURL(), url.getAccessCount()));
 
