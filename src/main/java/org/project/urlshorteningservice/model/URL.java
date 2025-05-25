@@ -1,9 +1,6 @@
 package org.project.urlshorteningservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,14 +13,26 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @NoArgsConstructor
+@Table(name = "urls")
 public class URL {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     Long id;
+
+    @Column(name = "longURL", nullable = false)
     String longURL;
+
+    @Column(name = "shortURL", unique = true, nullable = false)
     String shortURL;
+
+    @Column(name = "accessCount")
     Long accessCount;
+
+    @Column(name = "createdAt")
     LocalDateTime createdAt;
+
+    @Column(name = "updatedAt")
     LocalDateTime updatedAt;
 }
