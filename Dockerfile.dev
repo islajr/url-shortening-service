@@ -1,0 +1,9 @@
+#Dockerfile.dev
+
+FROM eclipse-temurin:21.0.2_13-jdk-jammy
+WORKDIR /app
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
+RUN ./mvnw dependency:go-offline
+
+CMD ["./mvnw", "spring-boot:run"]
