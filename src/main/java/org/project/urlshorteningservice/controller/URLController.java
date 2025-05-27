@@ -16,6 +16,7 @@ public class URLController {
 
     @PostMapping("/")
     public ResponseEntity<URLResponse> createURL(@RequestBody String longURL) {
+        System.out.println("testing");
         return urlService.shortenURL(longURL);
     }
 

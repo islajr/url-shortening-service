@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Random;
 
 @AllArgsConstructor
 @Service
@@ -27,6 +27,7 @@ public class URLService {
         url.setShortURL(generateShortURL(longURL));
         url.setCreatedAt(LocalDateTime.now());
         url.setUpdatedAt(LocalDateTime.now());
+        url.setAccessCount(0L);
 
         urlRepository.save(url);
         return ResponseEntity.ok(new URLResponse(url.getLongURL(), url.getShortURL()));
@@ -36,8 +37,9 @@ public class URLService {
         URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("Provided short URL does not exist."));
 
         url.setAccessCount(url.getAccessCount() + 1);
+        url.setUpdatedAt(LocalDateTime.now());
         urlRepository.save(url);
-        return ResponseEntity.ok(new URLResponse(url.getShortURL(), url.getLongURL()));
+        return ResponseEntity.ok(new URLResponse(url.getLongURL(), url.getShortURL()));
     }
 
     public ResponseEntity<URLResponse> updateShortURL(String shortURL, String longURL) {
@@ -48,7 +50,7 @@ public class URLService {
             url.setUpdatedAt(LocalDateTime.now());
             urlRepository.save(url);
 
-            return ResponseEntity.ok(new URLResponse(url.getShortURL(), url.getLongURL()));
+            return ResponseEntity.ok(new URLResponse(url.getLongURL(), url.getShortURL()));
         }
 
         throw new DuplicateLongURLException("Provided long URL hasn't changed.");
@@ -65,12 +67,20 @@ public class URLService {
     public ResponseEntity<URLStats> getURLStats(String shortURL) {
         URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("Provided short URL does not exist."));
 
-        return ResponseEntity.ok(new URLStats(url.getShortURL(), url.getLongURL(), url.getAccessCount()));
+        return ResponseEntity.ok(new URLStats(url.getLongURL(), url.getShortURL(), url.getAccessCount()));
 
     }
 
     private String generateShortURL(String longURL) {
+        int lowerLimit = 48; // integer - 0
+        int upperLimit = 122;   // letter - z
+        int length = 15;
+        Random random = new Random();
 
-        return UUID.fromString(longURL).toString();
+        return random.ints(lowerLimit, upperLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(new Random().nextInt(length - 5, length + 5))
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
     }
 }
