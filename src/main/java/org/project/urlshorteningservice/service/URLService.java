@@ -24,7 +24,7 @@ public class URLService {
         URL url = new URL();
 
         url.setLongURL(longURL);
-        url.setShortURL(generateShortURL(longURL));
+        url.setShortURL(generateShortURL());
         url.setCreatedAt(LocalDateTime.now());
         url.setUpdatedAt(LocalDateTime.now());
         url.setAccessCount(0L);
@@ -47,6 +47,7 @@ public class URLService {
 
         if (!url.getLongURL().equals(longURL) && !longURL.isBlank()) {
             url.setLongURL(longURL);
+            url.setAccessCount(url.getAccessCount() + 1);
             url.setUpdatedAt(LocalDateTime.now());
             urlRepository.save(url);
 
@@ -71,7 +72,7 @@ public class URLService {
 
     }
 
-    private String generateShortURL(String longURL) {
+    private String generateShortURL() {
         int lowerLimit = 48; // integer - 0
         int upperLimit = 122;   // letter - z
         int length = 15;
