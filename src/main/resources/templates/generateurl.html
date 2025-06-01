@@ -13,9 +13,11 @@
                     <div class="col-lg-6">
                         <div class="text-center my-5">
                             <h1 class="display-5 fw-bolder text-white mb-2">Generate a short URL</h1>
-                            <form action="createURL" role="form" method="post">
-                                <input type="text" placeholder="Provide a long URL you would like to shorten">
-                                <button>Generate</button>
+                            <p class="lead text-white-50 mb-4">Provide a long URL and get a short, minimalistic URL in return</p>
+                            <form th:action="@{/createURL}" role="form" method="post">
+<!--                                <label for="longURL"></label>-->
+                                <input type="text" class="form-control" placeholder="Long URL goes here" id="longURL" name="longURL" th:field="*{longURL}" required>
+                                <button class="btn btn-primary mt-4" type="submit">Generate</button>
                             </form>
                         </div>
                     </div>

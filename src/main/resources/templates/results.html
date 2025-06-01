@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layouts/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Results - URL Shortening Service</title>
+</head>
+<body>
+  <main layout:fragment="content"></main>
+  <h1>Your Short URL is : <span th:text="${shorturl}"></span></h1>
+</body>
+</html>

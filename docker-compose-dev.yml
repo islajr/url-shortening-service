@@ -17,14 +17,25 @@ services:
       dockerfile: Dockerfile.dev
     depends_on:
       - db
-    volumes:
-      - .:/app  # for the mounting of the source code
+#    volumes:ITfM7v6d7C
+#      - .:/app  # for the mounting of the source code
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/url-shortener-db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
     ports:
       - "8080:8080"
+    develop:
+      watch:
+        - path: ./src
+          action: sync+restart
+          target: /app/src
+        - path: ./pom.xml
+          action: rebuild
+        - path: ./mvnw
+          action: rebuild
+        - path: ./.mvn
+          action: rebuild
 
 volumes:
   postgres-data:

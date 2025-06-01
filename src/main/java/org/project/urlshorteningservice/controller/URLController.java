@@ -5,31 +5,36 @@ import org.project.urlshorteningservice.model.URLResponse;
 import org.project.urlshorteningservice.model.URLStats;
 import org.project.urlshorteningservice.service.URLService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/url-shortener")
+@Controller
 @AllArgsConstructor
 public class URLController {
 
     private final URLService urlService;
 
-    @PostMapping("/")
-    public ResponseEntity<URLResponse> createURL(@RequestBody String longURL) {
-        return urlService.shortenURL(longURL);
+    @PostMapping("/createURL")
+    public String createURL(@RequestParam("longURL") String longURL, Model model) {
+        ResponseEntity<URLResponse> response =  urlService.shortenURL(longURL);
+        assert response.getBody() != null;
+        model.addAttribute("longURL", longURL);
+        model.addAttribute("shorturl", response.getBody().shortURL());
+        return "results";
     }
 
-    @GetMapping("/")
+    @GetMapping("/retrieve")
     public ResponseEntity<URLResponse> retrieveLongURL(@RequestParam String shortURL) {
         return urlService.retrieveLongURL(shortURL);
     }
 
-    @PutMapping("/")
+    @PutMapping("/update")
     public ResponseEntity<URLResponse> updateShortURL(@RequestParam String shortURL, @RequestBody String longURL) {
         return urlService.updateShortURL(shortURL, longURL);
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteShortURL(@RequestParam String shortURL) {
         return urlService.deleteShortURL(shortURL);
     }
