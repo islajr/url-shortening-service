@@ -16,12 +16,8 @@ public class URLController {
     private final URLService urlService;
 
     @PostMapping("/createURL")
-    public String createURL(@RequestParam("longURL") String longURL, Model model) {
-        ResponseEntity<URLResponse> response =  urlService.shortenURL(longURL);
-        assert response.getBody() != null;
-        model.addAttribute("longURL", longURL);
-        model.addAttribute("shorturl", response.getBody().shortURL());
-        return "results";
+    public ResponseEntity<URLResponse> createURL(@RequestBody String longURL) {
+        return urlService.shortenURL(longURL);
     }
 
     @GetMapping("/retrieve")
