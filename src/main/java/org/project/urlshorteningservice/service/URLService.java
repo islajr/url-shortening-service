@@ -92,7 +92,7 @@ public class URLService {
     }
 
     public HttpResponse<String> redirect(String shortURL) {
-        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new RuntimeException("No such short url!")); // customize exception later.
+        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new URLNotFoundException("No such short url!"));
 
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest request = null;
