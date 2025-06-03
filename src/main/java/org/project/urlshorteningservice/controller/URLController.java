@@ -4,14 +4,17 @@ import lombok.AllArgsConstructor;
 import org.project.urlshorteningservice.model.URLResponse;
 import org.project.urlshorteningservice.model.URLStats;
 import org.project.urlshorteningservice.service.URLService;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.http.HttpResponse;
 
 @Controller
 @AllArgsConstructor
-public class URLController {
+public class URLController implements ErrorController {
 
     private final URLService urlService;
 
@@ -38,5 +41,16 @@ public class URLController {
     @GetMapping("/{shortURL}/stats")
     public ResponseEntity<URLStats> getURLStats(@PathVariable String shortURL) {
         return urlService.getURLStats(shortURL);
+    }
+
+    // redirecting to longURL address
+    @RequestMapping("/{shortURL}")
+    public HttpResponse<String> redirect(@PathVariable String shortURL) {
+        return urlService.redirect(shortURL);
+    }
+
+    @RequestMapping("/error")
+    public ResponseEntity<String> error() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such endpoint");
     }
 }

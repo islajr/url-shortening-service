@@ -11,6 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -83,5 +89,29 @@ public class URLService {
                 .limit(new Random().nextInt(length - 5, length + 5))
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
+    }
+
+    public HttpResponse<String> redirect(String shortURL) {
+        URL url = urlRepository.findURLByShortURL(shortURL).orElseThrow(() -> new RuntimeException("No such short url!")); // customize exception later.
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = null;
+        HttpResponse<String> response = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .uri(new URI("https://" + url.getLongURL()))
+                    .GET()
+                    .build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        try {
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
