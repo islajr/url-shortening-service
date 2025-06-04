@@ -54,6 +54,7 @@ public class URLService {
         if (!url.getLongURL().equals(longURL) && !longURL.isBlank()) {
             url.setLongURL(longURL);
             url.setAccessCount(url.getAccessCount() + 1);
+            url.setShortURL(generateShortURL());
             url.setUpdatedAt(LocalDateTime.now());
             urlRepository.save(url);
 

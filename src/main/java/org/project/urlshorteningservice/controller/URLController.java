@@ -38,8 +38,8 @@ public class URLController implements ErrorController {
         return urlService.deleteShortURL(shortURL);
     }
 
-    @GetMapping("/{shortURL}/stats")
-    public ResponseEntity<URLStats> getURLStats(@PathVariable String shortURL) {
+    @GetMapping("/stats")
+    public ResponseEntity<URLStats> getURLStats(@RequestParam String shortURL) {
         return urlService.getURLStats(shortURL);
     }
 
